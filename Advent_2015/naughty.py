@@ -32,23 +32,29 @@ class Naughty(Solver):
         pair_repeat = False
         pairs = set()
         in_between = False
-        idx = 1
-        while idx < len(input_string)-1:
-            pair = input_string[idx - 1] + input_string[idx]
-            if not ((input_string[idx - 1] == input_string[idx]) and (input_string[idx] == input_string[idx + 1])):
-                if not (pair_repeat := pair  in pairs):
+        prev = input_string[0]
+        pairs.add(input_string[0] + input_string[1])
+        for idx, char in enumerate(input_string[1:-1]):
+            nxt = input_string[idx + 2]
+            if not (prev == char and char == nxt) and not pair_repeat:
+                pair = char + nxt
+                if not (pair_repeat := pair in pairs):
                     pairs.add(pair)
-            in_between = input_string[idx - 1] == input_string[idx + 1]
-            if in_between and pair_repeat:
+            in_between = prev == nxt if not in_between else in_between
+            if pair_repeat and in_between:
                 return True
-            idx += 1
-        return in_between and input_string[idx - 1] + input_string[idx] in pairs
-
+            prev = char
+        return False
+                    
+    
 
     def how_many_nice(self, input_lines: iter) -> int:
         nice_strings = 0
         
         for input_string in input_lines:
-            nice_strings += int(self.is_nice_v2(input_string))
+            if self.is_nice_v2(input_string):
+                nice_strings += 1
+                print(input_string)
+            
         return nice_strings
         
